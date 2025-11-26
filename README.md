@@ -58,4 +58,4 @@ Inside Edge is an intelligent browser assistant designed to help users read smar
 
 1. Clone or download this repository:
    ```sh
-   git clone https://github.com/YourUsername/Inside-Edge.git
+   git clone https://github.com/Aryashrestha2023/Inside_Edge_Chrome_Extension.git
