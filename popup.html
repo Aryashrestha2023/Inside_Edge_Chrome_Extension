@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI for Webpage</title>
+  <style>
+    :root {
+      --primary: #ec4899;          /* main pink */
+      --primary-soft: #ffe4f1;     /* soft pink */
+      --bg: #fff5f9;
+      --card-bg: #ffffff;
+      --border-soft: #fbcfe8;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-soft: 0 14px 40px rgba(190, 24, 93, 0.15);
+      --shadow-light: 0 6px 18px rgba(190, 24, 93, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      min-width: 520px;
+      min-height: 460px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: radial-gradient(circle at top left, #ffe4f4 0, #fff7fb 40%, #fdf2f8 100%);
+      color: var(--text-main);
+    }
+
+    .app-shell {
+      background: linear-gradient(135deg, #ffffff, #fff7fb);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      padding: 16px 18px 14px;
+      border: 1px solid rgba(244, 114, 182, 0.35);
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff 0, #fecdd3 40%, #ec4899 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 22px rgba(236, 72, 153, 0.45);
+      font-size: 15px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 650;
+      color: #9d174d;
+      letter-spacing: -0.03em;
+    }
+
+    .app-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(251, 113, 133, 0.1);
+      color: #be185d;
+      border: 1px solid rgba(244, 114, 182, 0.7);
+    }
+
+    /* SECTION LAYOUT */
+    .section {
+      margin-top: 12px;
+      padding: 10px 10px 9px;
+      border-radius: var(--radius-lg);
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-light);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #9d174d;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title span.icon {
+      font-size: 14px;
+    }
+
+    .section-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* CONTROLS (buttons, selects) */
+    select,
+    button,
+    textarea,
+    input {
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #summary-type {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 170, 0.7);
+      background: #ffffff;
+      color: #111827;
+      min-width: 130px;
+      outline: none;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    #summary-type:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.4);
+      transform: translateY(-0.5px);
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease, opacity 0.12s ease;
+      white-space: nowrap;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(236, 72, 153, 0.45);
+    }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 26px rgba(236, 72, 153, 0.6);
+    }
+
+    button.primary:active {
+      transform: translateY(0);
+      box-shadow: 0 5px 14px rgba(236, 72, 153, 0.5);
+    }
+
+    button.soft {
+      background: #ffe4f1;
+      color: #9d174d;
+    }
+
+    button.soft:hover {
+      background: #fed7f2;
+      transform: translateY(-0.5px);
+    }
+
+    button.subtle {
+      background: #f9fafb;
+      color: #4b5563;
+    }
+
+    button.subtle:hover {
+      background: #f3f4f6;
+    }
+
+    button.small {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* SUMMARY AREA */
+    #result {
+      margin-top: 8px;
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(244, 114, 182, 0.7);
+      background: #fff7fb;
+      padding: 10px 11px;
+      min-height: 90px;
+      max-height: 170px;
+      overflow-y: auto;
+      font-size: 13px;
+      color: #111827;
+      white-space: pre-wrap;
+    }
+
+    .loader {
+      border: 3px solid rgba(248, 187, 208, 0.4);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin: 6px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .summary-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    #save-summary-feedback {
+      font-size: 11px;
+      color: #16a34a;
+      display: none;
+    }
+
+    /* NOTES */
+    #note-input {
+      width: 100%;
+      margin-top: 4px;
+      padding: 7px 9px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      background: #fff7fb;
+      min-height: 60px;
+      resize: vertical;
+      color: #111827;
+    }
+
+    #note-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.35);
+    }
+
+    .notes-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    #notes-list {
+      margin-top: 6px;
+      max-height: 110px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .note-item {
+      border-radius: 10px;
+      background: #fff7fb;
+      border: 1px solid #fbcfe8;
+      padding: 6px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .note-item:hover {
+      background: #ffe4f1;
+      border-color: #f472b6;
+    }
+
+    .note-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .note-btn {
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #4b5563;
+    }
+
+    .note-btn:hover {
+      background: rgba(248, 187, 208, 0.4);
+    }
+
+    /* CHAT */
+    #chat-window {
+      margin-top: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      background: #fff7fb;
+      padding: 6px 7px;
+      min-height: 70px;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .chat-user,
+    .chat-ai {
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .chat-user {
+      color: #111827;
+    }
+
+    .chat-ai {
+      color: #be185d;
+    }
+
+    #chat-input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      font-size: 12px;
+    }
+
+    #chat-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.3);
+    }
+
+    .chat-controls {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chat-controls button {
+      font-size: 12px;
+    }
+
+    .chat-icon-btn {
+      width: 30px;
+      padding: 6px 0;
+    }
+
+    footer {
+      margin-top: 10px;
+      text-align: right;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    footer span {
+      opacity: 0.9;
+    }
+
+    .cheatsheet-row {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: #16a34a; /* green-ish success text */
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-btn {
+      background: #f9fafb;
+      color: #4b5563;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .settings-btn:hover {
+      background: #eef2ff;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="app-title">
+        <div class="badge">✨</div>
+        <div>
+          <h2>Inside Edge</h2>
+          <div class="app-subtitle">Summarise, take notes & chat with any page</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="tag">Gemini • Context-aware</div>
+        <button id="open-api-settings" class="settings-btn small" title="Change Gemini API Key">
+          ⚙ API Key
+        </button>
+      </div>
+    </header>
+
+    <!-- SUMMARY SECTION -->
+    <section class="section" id="summary-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">📝</span>
+          <span>Smart Summary</span>
+        </div>
+        <div class="section-caption">Choose style & summarise current tab</div>
+      </div>
+
+      <div class="row">
+        <select id="summary-type">
+          <option value="brief">Brief</option>
+          <option value="detailed">Detailed</option>
+          <option value="bullets">Bullet Points</option>
+        </select>
+        <button id="summarize" class="primary">
+          <span>Summarize</span>
+        </button>
+      </div>
+
+      <div id="result">Select a type and click Summarize...</div>
+
+      <div class="summary-actions">
+        <button id="save-summary-note" class="primary small">Save summary to notes</button>
+        <button id="clear-summary" class="subtle small">Clear Summary</button>
+        <span id="save-summary-feedback">Saved ✓</span>
+      </div>
+    </section>
+
+    <!-- NOTES SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">📌</span>
+          <span>Quick Notes</span>
+        </div>
+        <div class="section-caption">Store small thoughts linked to this page</div>
+      </div>
+
+      <textarea id="note-input" placeholder="Write a note..."></textarea>
+
+      <div class="notes-actions">
+        <button id="save-note" class="primary small">Save Note</button>
+        <button id="new-note" class="soft small">New</button>
+        <button id="clear-notes" class="subtle small">Clear All</button>
+      </div>
+
+      <div id="notes-list">
+        <div style="font-size:12px;color:#9ca3af;">No notes yet</div>
+      </div>
+    </section>
+
+    <!-- CHAT SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">💬</span>
+          <span>Ask AI About This Page</span>
+        </div>
+        <div class="section-caption">Answers are restricted to the current page/PDF content</div>
+      </div>
+
+      <div id="chat-window">
+        <div style="opacity:.6;">💬 Start chatting...</div>
+      </div>
+
+      <input id="chat-input" placeholder="Ask about this page..." />
+
+      <div class="chat-controls">
+        <button id="ask-btn" class="primary small">Ask</button>
+        <!-- <button id="mic-btn" class="soft small chat-icon-btn" title="Speak your question">🎙</button> -->
+        <button id="tts-btn" class="soft small chat-icon-btn" title="Read last answer aloud">🔊</button>
+        <button id="save-chat-note" class="soft small">Save Chat to Notes</button>
+        <button id="clear-chat" class="subtle small">Clear Chat</button>
+      </div>
+    </section>
+
+    <!-- TRANSLATION SECTION -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">🌐</span>
+          <span>Translate Page</span>
+        </div>
+        <div class="section-caption">Translate entire page content (MyMemory - Free 10k words/day)</div>
+      </div>
+
+      <div class="row">
+        <select id="translate-target-lang" style="padding: 7px 10px; border-radius: 999px; border: 1px solid rgba(248, 113, 170, 0.7); background: #ffffff; color: #111827; min-width: 150px; outline: none;">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="ja">Japanese</option>
+          <option value="zh">Chinese</option>
+          <option value="ar">Arabic</option>
+          <option value="hi">Hindi</option>
+        </select>
+        <button id="translate-page" class="primary">
+          <span>Translate</span>
+        </button>
+      </div>
+
+      <div id="translation-result" style="margin-top: 8px; border-radius: 10px; border: 1px dashed rgba(244, 114, 182, 0.7); background: #fff7fb; padding: 10px 11px; min-height: 60px; max-height: 200px; overflow-y: auto; font-size: 13px; color: #111827; white-space: pre-wrap; display: none;">
+        Translation will appear here...
+      </div>
+
+      <div class="summary-actions" style="margin-top: 6px;">
+        <button id="save-translation-note" class="primary small" style="display: none;" disabled>Save Translation to Notes</button>
+        <button id="download-translation" class="soft small" style="display:none;">⬇ Download .txt</button>
+        <button id="clear-translation" class="subtle small">Clear</button>
+      </div>
+      <p id="translation-warning" style="display:none; font-size:11px; color:#b91c1c; margin-top:4px;">
+        ⚠ Translation is large — download as text file to avoid Chrome storage limits.
+      </p>
+    </section>
+
+    <div class="cheatsheet-row">
+      <button id="download-cheatsheet" class="primary small">
+        📥 Download Study Cheatsheet
+      </button>
+      <span id="cheatsheet-status" class="status-text"></span>
+    </div>
+
+    <footer>
+      <span>Built by you • Powered by Gemini • 🌐 MyMemory Translation</span>
+    </footer>
+  </div>
+
+  <!-- pdf.js first, then popup logic -->
+  <script src="pdf.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

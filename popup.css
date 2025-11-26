@@ -1,0 +1,22 @@
+.chat-window {
+  background:#fff;
+  padding:8px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  max-height:180px;
+  overflow-y:auto;
+}
+
+.chat-user {
+  background:#e8f0fe;
+  padding:8px;
+  border-radius:6px;
+  margin:6px 0;
+}
+
+.chat-ai {
+  background:#e8ffe9;
+  padding:8px;
+  border-radius:6px;
+  margin:6px 0;
+}
